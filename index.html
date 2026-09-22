@@ -1,13 +1,31 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reusable Studio Engine</title>
-    <link rel="stylesheet" href="./style.css" />
-  </head>
-  <body>
-    <canvas id="studio-canvas" aria-label="Interactive stickman canvas"></canvas>
-    <script type="module" src="./main.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Time Waiting</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="tool">
+    <header>
+      <p class="label">EVERYDAY TOOL</p>
+      <h1>Tasks</h1>
+      <p class="subtitle">See how long each task has been waiting.</p>
+    </header>
+
+    <form id="taskForm" class="task-form">
+      <input id="taskInput" type="text" placeholder="Add a task..." maxlength="100" autocomplete="off" required>
+      <button type="submit">Add</button>
+    </form>
+
+    <p id="storageMessage" class="storage-message" hidden>
+      Your browser could not save tasks. They may disappear when you reload.
+    </p>
+
+    <section id="taskList" class="task-list" aria-live="polite"></section>
+    <p id="emptyMessage" class="empty-message">No tasks yet.</p>
+  </main>
+  <script src="script.js"></script>
+</body>
 </html>

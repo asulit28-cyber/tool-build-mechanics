@@ -2,12 +2,134 @@
 
 body {
   margin: 0;
-  overflow: hidden;
-  background: #ffffff;
+  min-height: 100vh;
+  background: #fff;
+  color: #111;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-#studio-canvas {
-  display: block;
-  width: 100vw;
-  height: 100vh;
+.tool {
+  width: min(760px, calc(100% - 40px));
+  margin: 70px auto;
+}
+
+header { margin-bottom: 28px; }
+
+.label {
+  margin: 0 0 8px;
+  font-size: 12px;
+  letter-spacing: .12em;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0;
+  font-size: 42px;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 8px 0 0;
+  color: #666;
+  font-size: 16px;
+}
+
+.task-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.task-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #999;
+  border-radius: 4px;
+  font-size: 16px;
+  outline: none;
+}
+
+.task-form input:focus { border-color: #111; }
+
+button {
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  border-radius: 4px;
+  padding: 0 20px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+button:hover { background: #333; }
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task {
+  border: 1px solid #ddd;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-radius: 4px;
+}
+
+.task-info { min-width: 0; }
+
+.task-name {
+  margin: 0 0 7px;
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
+
+.task-time {
+  margin: 0;
+  color: #666;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+.complete-button {
+  background: #fff;
+  color: #111;
+  border: 1px solid #999;
+  padding: 9px 13px;
+  flex-shrink: 0;
+}
+
+.complete-button:hover { background: #f2f2f2; }
+
+.task.completed { background: #fafafa; }
+
+.task.completed .task-name {
+  text-decoration: line-through;
+  color: #777;
+}
+
+.empty-message {
+  color: #777;
+  font-size: 14px;
+  margin-top: 24px;
+}
+
+.storage-message {
+  margin: 0 0 18px;
+  padding: 10px 12px;
+  border: 1px solid #999;
+  font-size: 13px;
+}
+
+@media (max-width: 520px) {
+  .tool { margin: 40px auto; }
+  .task {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .complete-button { width: 100%; }
 }
