@@ -5,6 +5,7 @@ const taskInput = document.getElementById("taskInput");
 const taskList = document.getElementById("taskList");
 const emptyMessage = document.getElementById("emptyMessage");
 const storageMessage = document.getElementById("storageMessage");
+const clearCompletedBtn = document.getElementById("clearCompletedBtn");
 
 let storageAvailable = true;
 let tasks = loadTasks();
@@ -88,10 +89,16 @@ function renderTasks() {
 
   if (tasks.length === 0) {
     emptyMessage.hidden = false;
+    clearCompletedBtn.hidden = true;
     return;
   }
 
   emptyMessage.hidden = true;
+  
+  // Show "Clear Completed" button only if at least one task is finished
+  const hasCompleted = tasks.some(task => task.completedAt !== null);
+  clearCompletedBtn.hidden = !hasCompleted;
+
   tasks.forEach(task => taskList.appendChild(createTaskElement(task)));
 }
 
@@ -128,6 +135,12 @@ function completeTask(id) {
   renderTasks();
 }
 
+function clearCompleted() {
+  tasks = tasks.filter(task => !task.completedAt);
+  saveTasks();
+  renderTasks();
+}
+
 taskForm.addEventListener("submit", event => {
   event.preventDefault();
 
@@ -138,6 +151,8 @@ taskForm.addEventListener("submit", event => {
   taskInput.value = "";
   taskInput.focus();
 });
+
+clearCompletedBtn.addEventListener("click", clearCompleted);
 
 if (!storageAvailable) storageMessage.hidden = false;
 

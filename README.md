@@ -49,19 +49,17 @@ The interface displays active tasks, their waiting time, a Complete button, and 
 
 ## Break Log
 
-**IMPORTANT:** Replace every placeholder below with a REAL date and REAL commit hash from your own Git history. Do not invent hashes.
-
 ### Break 1
-- Date: `[REAL DATE]`
-- Commit hash: `[REAL HASH]`
-- What broke: Tasks disappeared after refreshing.
-- What changed: Added persistent `localStorage` saving/loading.
+- Date: Sep 22
+- Commit hash: 
+- What broke: didn't work cause wrong labeling in script
+- What changed: I made sure all the labels were correct
 
 ### Break 2
-- Date: `[REAL DATE]`
-- Commit hash: `[REAL HASH]`
-- What broke: The timer reset after refreshing.
-- What changed: Stored `createdAt` and calculated elapsed time from it.
+- Date: Sep 23 
+- Commit hash: 
+- What broke: The formatting broke after trying to add a clear button
+- What changed: tryed to fix it.
 
 ### Break 3
 - Date: `[REAL DATE]`
@@ -69,21 +67,5 @@ The interface displays active tasks, their waiting time, a Complete button, and 
 - What broke: A completed task could continue displaying as active.
 - What changed: Added `completedAt` and stopped the timer on completion.
 
-## Submission Links
-
-Replace these with your real links:
-- Live deployed tool: `[LIVE URL]`
-- GitHub repository: `[GITHUB URL]`
-- Screen recording: `[RECORDING URL]`
-
 ## Git History Requirement
 The assignment requires at least 5 commits across 2 or more different dates.
-
-Possible real commit messages:
-1. `build: create basic task interface`
-2. `build: add task creation logic`
-3. `fix: persist tasks with localStorage`
-4. `fix: preserve elapsed time after reload`
-5. `fix: stop timer when task is completed`
-
-Use the actual hashes from `git log --oneline` in the break log.
