@@ -62,10 +62,10 @@ The interface displays active tasks, their waiting time, a Complete button, and 
 - What changed: tryed to fix it.
 
 ### Break 3
-- Date: `[REAL DATE]`
-- Commit hash: `[REAL HASH]`
+- Date: Sep 23
+- Commit hash: 
 - What broke: A completed task could continue displaying as active.
-- What changed: Added `completedAt` and stopped the timer on completion.
+- What changed: stopped the timer on completion.
 
 ## Git History Requirement
 The assignment requires at least 5 commits across 2 or more different dates.
