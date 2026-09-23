@@ -45,16 +45,16 @@ function formatDuration(milliseconds) {
   return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
-function getTaskDuration(task) {
-  return (task.completedAt || Date.now()) - task.createdAt;
-}
-
 function createTaskElement(task) {
   const article = document.createElement("article");
   article.className = "task";
   article.dataset.id = task.id;
 
-  if (task.completedAt) article.classList.add("completed");
+  const now = Date.now();
+  const isStarted = task.startedAt !== null;
+  const isCompleted = task.completedAt !== null;
+
+  if (isCompleted) article.classList.add("completed");
 
   const info = document.createElement("div");
   info.className = "task-info";
@@ -63,25 +63,77 @@ function createTaskElement(task) {
   name.className = "task-name";
   name.textContent = task.text;
 
-  const time = document.createElement("p");
+  const time = document.createElement("div");
   time.className = "task-time";
-  time.textContent = task.completedAt
-    ? `completed after ${formatDuration(getTaskDuration(task))}`
-    : `waiting ${formatDuration(getTaskDuration(task))}`;
 
   info.append(name, time);
   article.appendChild(info);
 
-  if (!task.completedAt) {
-    const button = document.createElement("button");
-    button.className = "complete-button";
-    button.type = "button";
-    button.textContent = "Complete";
-    button.addEventListener("click", () => completeTask(task.id));
-    article.appendChild(button);
+  const controls = document.createElement("div");
+  controls.className = "task-controls";
+
+  // State 1: Not started yet
+  if (!isStarted && !isCompleted) {
+    const startBtn = document.createElement("button");
+    startBtn.className = "action-button start-button";
+    startBtn.type = "button";
+    startBtn.textContent = "Start";
+    startBtn.addEventListener("click", () => startTask(task.id));
+    controls.appendChild(startBtn);
   }
 
+  // State 2: In progress
+  if (isStarted && !isCompleted) {
+    const completeBtn = document.createElement("button");
+    completeBtn.className = "action-button complete-button";
+    completeBtn.type = "button";
+    completeBtn.textContent = "Complete";
+    completeBtn.addEventListener("click", () => completeTask(task.id));
+    controls.appendChild(completeBtn);
+  }
+
+  // Individual delete button for every task
+  const deleteBtn = document.createElement("button");
+  deleteBtn.className = "delete-button";
+  deleteBtn.type = "button";
+  deleteBtn.setAttribute("aria-label", "Delete task");
+  deleteBtn.innerHTML = "&times;";
+  deleteBtn.addEventListener("click", () => deleteTask(task.id));
+  controls.appendChild(deleteBtn);
+
+  article.appendChild(controls);
   return article;
+}
+
+function updateTaskTimeDisplay(element, task) {
+  const timeElement = element.querySelector(".task-time");
+  const now = Date.now();
+
+  const isStarted = task.startedAt !== null;
+  const isCompleted = task.completedAt !== null;
+
+  if (isCompleted) {
+    const waitingDuration = task.startedAt - task.createdAt;
+    const workDuration = task.completedAt - task.startedAt;
+    const totalDuration = task.completedAt - task.createdAt;
+
+    timeElement.innerHTML = `
+      <span>Sat waiting: <strong>${formatDuration(waitingDuration)}</strong></span> &bull; 
+      <span>Work time: <strong>${formatDuration(workDuration)}</strong></span> &bull; 
+      <span>Total: <strong>${formatDuration(totalDuration)}</strong></span>
+    `;
+  } else if (isStarted) {
+    const workDuration = now - task.startedAt;
+    const waitingDuration = task.startedAt - task.createdAt;
+
+    timeElement.innerHTML = `
+      <span class="active-work">Working: <strong>${formatDuration(workDuration)}</strong></span> 
+      <span class="sub-time">(Waited ${formatDuration(waitingDuration)})</span>
+    `;
+  } else {
+    const waitingDuration = now - task.createdAt;
+    timeElement.innerHTML = `<span>Waiting: <strong>${formatDuration(waitingDuration)}</strong></span>`;
+  }
 }
 
 function renderTasks() {
@@ -95,22 +147,21 @@ function renderTasks() {
 
   emptyMessage.hidden = true;
   
-  // Show "Clear Completed" button only if at least one task is finished
   const hasCompleted = tasks.some(task => task.completedAt !== null);
   clearCompletedBtn.hidden = !hasCompleted;
 
-  tasks.forEach(task => taskList.appendChild(createTaskElement(task)));
+  tasks.forEach(task => {
+    const el = createTaskElement(task);
+    updateTaskTimeDisplay(el, task);
+    taskList.appendChild(el);
+  });
 }
 
 function updateTimers() {
   document.querySelectorAll(".task").forEach(element => {
     const task = tasks.find(item => item.id === element.dataset.id);
     if (!task) return;
-
-    const timeElement = element.querySelector(".task-time");
-    timeElement.textContent = task.completedAt
-      ? `completed after ${formatDuration(getTaskDuration(task))}`
-      : `waiting ${formatDuration(getTaskDuration(task))}`;
+    updateTaskTimeDisplay(element, task);
   });
 }
 
@@ -119,9 +170,19 @@ function addTask(text) {
     id: crypto.randomUUID(),
     text: text.trim(),
     createdAt: Date.now(),
+    startedAt: null,
     completedAt: null
   });
 
+  saveTasks();
+  renderTasks();
+}
+
+function startTask(id) {
+  const task = tasks.find(item => item.id === id);
+  if (!task || task.startedAt) return;
+
+  task.startedAt = Date.now();
   saveTasks();
   renderTasks();
 }
@@ -135,6 +196,12 @@ function completeTask(id) {
   renderTasks();
 }
 
+function deleteTask(id) {
+  tasks = tasks.filter(task => task.id !== id);
+  saveTasks();
+  renderTasks();
+}
+
 function clearCompleted() {
   tasks = tasks.filter(task => !task.completedAt);
   saveTasks();
@@ -143,7 +210,6 @@ function clearCompleted() {
 
 taskForm.addEventListener("submit", event => {
   event.preventDefault();
-
   const text = taskInput.value.trim();
   if (!text) return;
 
