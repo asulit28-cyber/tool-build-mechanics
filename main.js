@@ -7,6 +7,11 @@ const emptyMessage = document.getElementById("emptyMessage");
 const storageMessage = document.getElementById("storageMessage");
 const clearCompletedBtn = document.getElementById("clearCompletedBtn");
 
+// Metric Elements
+const statCompleted = document.getElementById("statCompleted");
+const statAvgWait = document.getElementById("statAvgWait");
+const statAvgWork = document.getElementById("statAvgWork");
+
 let storageAvailable = true;
 let tasks = loadTasks();
 
@@ -45,12 +50,32 @@ function formatDuration(milliseconds) {
   return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
+function updateDashboard() {
+  const completedTasks = tasks.filter(task => task.completedAt !== null && task.startedAt !== null);
+
+  statCompleted.textContent = completedTasks.length;
+
+  if (completedTasks.length === 0) {
+    statAvgWait.textContent = "--:--";
+    statAvgWork.textContent = "--:--";
+    return;
+  }
+
+  const totalWait = completedTasks.reduce((sum, task) => sum + (task.startedAt - task.createdAt), 0);
+  const totalWork = completedTasks.reduce((sum, task) => sum + (task.completedAt - task.startedAt), 0);
+
+  const avgWait = totalWait / completedTasks.length;
+  const avgWork = totalWork / completedTasks.length;
+
+  statAvgWait.textContent = formatDuration(avgWait);
+  statAvgWork.textContent = formatDuration(avgWork);
+}
+
 function createTaskElement(task) {
   const article = document.createElement("article");
   article.className = "task";
   article.dataset.id = task.id;
 
-  const now = Date.now();
   const isStarted = task.startedAt !== null;
   const isCompleted = task.completedAt !== null;
 
@@ -72,7 +97,6 @@ function createTaskElement(task) {
   const controls = document.createElement("div");
   controls.className = "task-controls";
 
-  // State 1: Not started yet
   if (!isStarted && !isCompleted) {
     const startBtn = document.createElement("button");
     startBtn.className = "action-button start-button";
@@ -82,7 +106,6 @@ function createTaskElement(task) {
     controls.appendChild(startBtn);
   }
 
-  // State 2: In progress
   if (isStarted && !isCompleted) {
     const completeBtn = document.createElement("button");
     completeBtn.className = "action-button complete-button";
@@ -92,7 +115,6 @@ function createTaskElement(task) {
     controls.appendChild(completeBtn);
   }
 
-  // Individual delete button for every task
   const deleteBtn = document.createElement("button");
   deleteBtn.className = "delete-button";
   deleteBtn.type = "button";
@@ -142,6 +164,7 @@ function renderTasks() {
   if (tasks.length === 0) {
     emptyMessage.hidden = false;
     clearCompletedBtn.hidden = true;
+    updateDashboard();
     return;
   }
 
@@ -155,6 +178,8 @@ function renderTasks() {
     updateTaskTimeDisplay(el, task);
     taskList.appendChild(el);
   });
+
+  updateDashboard();
 }
 
 function updateTimers() {

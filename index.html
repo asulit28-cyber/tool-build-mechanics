@@ -3,16 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Task Master</title>
+  <title>Time Waiting — Task Master</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main class="tool">
     <header>
-      <p class="label">Task Master</p>
+      <p class="label">EVERYDAY TOOL</p>
       <h1>Tasks</h1>
-      <p class="subtitle">See how long each task waits before you start, and how long it takes to finish.</p>
+      <p class="subtitle">Track how long your tasks sit waiting, how long they take to complete, and see your overall stats.</p>
     </header>
+
+    <!-- Dashboard Metrics -->
+    <section class="dashboard" id="dashboard">
+      <div class="metric">
+        <span class="metric-label">Completed</span>
+        <span class="metric-value" id="statCompleted">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Avg Wait Time</span>
+        <span class="metric-value" id="statAvgWait">--:--</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Avg Work Time</span>
+        <span class="metric-value" id="statAvgWork">--:--</span>
+      </div>
+    </section>
 
     <form id="taskForm" class="task-form">
       <input id="taskInput" type="text" placeholder="Add a task..." maxlength="100" autocomplete="off" required>
